@@ -1,0 +1,133 @@
+void Main()        
+{    
+	// Just need to fill in the information below to customize this to your liking
+	// you need to build the same count of modules on all refineries 
+	// I was inspired by: Workdawg 
+	// https://forum.keenswh.com/threads/enhanced-materials-counting-script.7348207/
+	
+	int RefineryCount = 1; // Refinery count on ship or base 
+	int ProductivityModule = 0; // Count of Productvity=speedModule on Refinery 
+  int ServerRafinerySpeed = 1; // Server refinery speed (1,3 or 10) 
+	string LCD_refiningTime = "LCDTime"; // LCD custom name
+
+ 
+	// Ore Refining Speed from http://www.spaceengineerswiki.com/Refinery 
+	int ORSCobalt = 1170; 
+	int ORSGold = 11700; 
+	int ORSIron = 93600; 
+	int ORSMagnesium = 4680; 
+	int ORSNickel = 2340; 
+	int ORSSilicon = 7800; 
+	int ORSSilver = 4680; 
+	int ORSStone = 46800; 
+	int ORSPlatinum = 1170; 
+	int ORSUranium = 1170;  
+	 
+	// Ore  
+	float OreCobalt = 0; 
+	float OreGold = 0; 
+	float OreIron = 0; 
+	float OreMagnesium = 0; 
+	float OreNickel = 0; 
+	float OreSilicon = 0; 
+	float OreSilver = 0; 
+	float OreStone = 0; 
+	float OrePlatinum = 0; 
+	float OreUranium = 0; 
+    
+	
+	float CobaltTime = 0;
+	float GoldTime = 0; 
+	float IronTime = 0; 
+	float MagnesiumTime = 0; 
+	float NickelTime = 0; 
+	float SiliconTime = 0; 
+	float SilverTime = 0; 
+	float StoneTime = 0; 
+	float PlatinumTime = 0; 
+	float UraniumTime = 0; 
+	float AllOreTime = 0;
+	
+	//int i = 0; 
+	//int j = 0; 
+	// int x = 0;
+  string info = ""; 
+	int OreRefiningSpeed = 0; 
+	
+	IMyTextPanel LCD; 
+	LCD = GridTerminalSystem.GetBlockWithName(LCD_refiningTime) as IMyTextPanel; 
+	
+	var allBlocks = new List<IMyTerminalBlock>();
+	GridTerminalSystem.GetBlocks(allBlocks);
+	List<IMyInventoryOwner> inventoryBlocks = new List<IMyInventoryOwner>(); // all blocks w/ inventories
+  List<IMyInventory> inventories = new List<IMyInventory>(); //actual inventories
+  // look for all blocks that have inventory
+  for (int x = 0; x < allBlocks.Count; x++)
+    {
+      var InventoryOwner = allBlocks[x] as IMyInventoryOwner;
+      if (InventoryOwner != null) //it's an inventory block
+				 {
+                inventoryBlocks.Add(InventoryOwner);
+         }
+     }
+   // add all inventories to the list
+for (int i = 0; i < inventoryBlocks.Count; i++)
+  {
+  // all blocks in this group have inventories, so add the first          
+  inventories.Add(inventoryBlocks[i].GetInventory(0));
+  // if more than one inventory, add the 2nd
+  if (inventoryBlocks[i].InventoryCount > 1)
+    {
+    IMyInventory inventory = inventoryBlocks[i].GetInventory(1);
+    inventories.Add(inventory);
+    }   		
+  }  
+	 	
+	
+  for (int j = 0; j < inventories.Count; j++)
+	{							// get all items in the inventory item
+		  List<IMyInventoryItem> items = new List<IMyInventoryItem>(); // get all items in the inventory item	
+		  items = inventories[j].GetItems();        
+			
+		  for(int i=0; i<items.Count; i++)        
+    {      			 
+        if (items[i].Content.ToString().Contains("Ore") && items[i].Content.SubtypeName == "Cobalt") OreCobalt = OreCobalt + float.Parse(items[i].Amount.ToString()); 
+        if (items[i].Content.ToString().Contains("Ore") && items[i].Content.SubtypeName == "Gold") OreGold = OreGold + float.Parse(items[i].Amount.ToString());		 
+        if (items[i].Content.ToString().Contains("Ore") && items[i].Content.SubtypeName == "Iron") OreIron = OreIron + float.Parse(items[i].Amount.ToString());  
+        if (items[i].Content.ToString().Contains("Ore") && items[i].Content.SubtypeName == "Magnesium") OreMagnesium =OreMagnesium + float.Parse(items[i].Amount.ToString());  	     
+        if (items[i].Content.ToString().Contains("Ore") && items[i].Content.SubtypeName == "Nickel") OreNickel = OreNickel + float.Parse(items[i].Amount.ToString());      
+        if (items[i].Content.ToString().Contains("Ore") && items[i].Content.SubtypeName == "Silicon") OreSilicon = OreSilicon + float.Parse(items[i].Amount.ToString());  
+        if (items[i].Content.ToString().Contains("Ore") && items[i].Content.SubtypeName == "Silver") OreSilver = OreSilver + float.Parse(items[i].Amount.ToString());     
+        if (items[i].Content.ToString().Contains("Ore") && items[i].Content.SubtypeName == "Stone") OreStone = OreStone + float.Parse(items[i].Amount.ToString());      
+        if (items[i].Content.ToString().Contains("Ore") && items[i].Content.SubtypeName == "Platinum") OrePlatinum = OrePlatinum + float.Parse(items[i].Amount.ToString());       
+        if (items[i].Content.ToString().Contains("Ore") && items[i].Content.SubtypeName == "Uranium") OreUranium = OreUranium + float.Parse(items[i].Amount.ToString());      
+	    }    	  
+  } 
+	// OreRefiningTime = OreCount / (((ServerRafinerySpeed * OreRefiningSpeed)+(ProductivityModule * (ServerRafinerySpeed * OreRefiningSpeed))) * RefineryCount) 
+	CobaltTime = OreCobalt / (((ServerRafinerySpeed * ORSCobalt)+(ProductivityModule * (ServerRafinerySpeed * ORSCobalt))) * RefineryCount);
+	GoldTime = OreGold / (((ServerRafinerySpeed * ORSGold)+(ProductivityModule * (ServerRafinerySpeed * ORSGold))) * RefineryCount);
+	IronTime = OreIron / (((ServerRafinerySpeed * ORSIron)+(ProductivityModule * (ServerRafinerySpeed * ORSIron))) * RefineryCount);
+	MagnesiumTime = OreMagnesium / (((ServerRafinerySpeed * ORSMagnesium)+(ProductivityModule * (ServerRafinerySpeed * ORSMagnesium))) * RefineryCount);
+	NickelTime = OreNickel / (((ServerRafinerySpeed * ORSNickel)+(ProductivityModule * (ServerRafinerySpeed * ORSNickel))) * RefineryCount);
+	SiliconTime = OreSilicon / (((ServerRafinerySpeed * ORSSilicon)+(ProductivityModule * (ServerRafinerySpeed * ORSSilicon))) * RefineryCount);
+	SilverTime = OreSilver / (((ServerRafinerySpeed * ORSSilver)+(ProductivityModule * (ServerRafinerySpeed * ORSSilver))) * RefineryCount);
+	StoneTime = OreStone / (((ServerRafinerySpeed * ORSStone)+(ProductivityModule * (ServerRafinerySpeed * ORSStone))) * RefineryCount);
+	PlatinumTime = OrePlatinum / (((ServerRafinerySpeed * ORSPlatinum)+(ProductivityModule * (ServerRafinerySpeed * ORSPlatinum))) * RefineryCount);
+	UraniumTime = OreUranium / (((ServerRafinerySpeed * ORSUranium)+(ProductivityModule * (ServerRafinerySpeed * ORSUranium))) * RefineryCount);
+	AllOreTime = CobaltTime + GoldTime + IronTime + MagnesiumTime +NickelTime + SiliconTime + SilverTime + StoneTime + PlatinumTime + UraniumTime;
+	
+	info = ("Cobalt Ore: " + OreCobalt + "  " + CobaltTime + "h" + "\n");
+	info = (info + "Gold Ore: " + OreGold + "  " + GoldTime + "h" + "\n");
+	info = (info + "Iron Ore: " + OreIron + "  "+ IronTime +"h" + "\n");
+	info = (info + "Magnesium Ore: " + OreMagnesium + "  " + MagnesiumTime + "h" + "\n");
+	info = (info + "Nickel Ore: " + OreNickel + "  " + NickelTime + "h" +  "\n");
+	info = (info + "Silicon Ore: " + OreSilicon + "  " + SiliconTime + "h" + "\n");
+	info = (info + "Silver Ore: " + OreSilver + "  " + SilverTime + "h" + "\n");
+	info = (info + "Stone Ore: " + OreStone + "  " + StoneTime + "h" + "\n");
+	info = (info + "Platinum Ore: " + OrePlatinum + "  " + PlatinumTime + "h" + "\n");
+	info = (info + "Uranium Ore: " + OreUranium + "  " + UraniumTime + "h" + "\n");
+	info = (info + "Time together : " + AllOreTime + "h");
+	Echo(info); 
+	LCD.WritePublicText(info); 
+  LCD.ShowPublicTextOnScreen(); 
+}
