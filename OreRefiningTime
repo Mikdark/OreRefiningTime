@@ -1,13 +1,13 @@
 void Main()        
 {    
-	// Just need to fill in the information below to customize this to your liking
+	
 	// you need to build the same count of modules on all refineries 
 	// I was inspired by: Workdawg 
 	// https://forum.keenswh.com/threads/enhanced-materials-counting-script.7348207/
 	
 	int RefineryCount = 1; // Refinery count on ship or base 
 	int ProductivityModule = 0; // Count of Productvity=speedModule on Refinery 
-  int ServerRafinerySpeed = 1; // Server refinery speed (1,3 or 10) 
+  	int ServerRafinerySpeed = 1; // Server refinery speed (1,3 or 10) 
 	string LCD_refiningTime = "LCDTime"; // LCD custom name
 
  
